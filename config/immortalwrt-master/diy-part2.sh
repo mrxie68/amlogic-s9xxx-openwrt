@@ -22,6 +22,13 @@ sed -i 's/192.168.1.1/10.10.10.23/g' package/base-files/files/bin/config_generat
 
 # ------------------------------- Other started -------------------------------
 #
+echo >> feeds.conf.default
+echo 'src-git istore https://github.com/linkease/istore;main' >> feeds.conf.default
+./scripts/feeds update istore
+./scripts/feeds install -d y -p istore luci-app-store
+
+
+cd openwrt/
 # Remove packages
 rm -rf feeds/packages/net/v2ray-geodata
 rm -rf feeds/packages/lang/golang
@@ -40,10 +47,7 @@ git clone https://github.com/asvow/luci-app-tailscale package/luci-app-tailscale
 #
 # ------------------------------- Other ends -------------------------------
 
-echo >> feeds.conf.default
-echo 'src-git istore https://github.com/linkease/istore;main' >> feeds.conf.default
-./scripts/feeds update istore
-./scripts/feeds install -d y -p istore luci-app-store
+
 
 
 
