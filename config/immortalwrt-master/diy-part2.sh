@@ -41,8 +41,7 @@ echo 'src-git istore https://github.com/linkease/istore;main' >> feeds.conf.defa
 #!/bin/bash
 
 # 切换到 openwrt 目录
-cd openwrt/ || { echo "无法切换到 openwrt 目录"; exit 1; }
-
+cd openwrt/
 # 删除 feeds 中的 golang 包
 echo "正在删除 feeds 中的 golang 包..."
 rm -rf feeds/packages/lang/golang
