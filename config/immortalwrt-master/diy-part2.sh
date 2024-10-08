@@ -23,24 +23,14 @@ echo "DISTRIB_SOURCECODE='immortalwrt'" >>package/base-files/files/etc/openwrt_r
 # ------------------------------- Other started -------------------------------
 #
 # Add luci-app-amlogic
-# 删除旧的 luci-app-amlogic 插件并克隆新的
 rm -rf package/luci-app-amlogic
 git clone https://github.com/ophub/luci-app-amlogic.git package/luci-app-amlogic
+#
+# Apply patch
+# git apply ../config/patches/{0001*,0002*}.patch --directory=feeds/luci
+#
+# ------------------------------- Other ends -------------------------------
 
-# 删除旧的 homeproxy 插件并克隆新的
-rm -rf package/homeproxy
-git clone https://github.com/VIKINGYFY/homeproxy.git package/homeproxy
-
-# 删除并替换 feeds 中的 golang 包
-rm -rf feeds/packages/lang/golang
-git clone https://github.com/sbwml/packages_lang_golang -b 23.x feeds/packages/lang/golang
-
-# 删除并替换 v2ray-geodata 和 mosdns 包
-rm -rf feeds/packages/net/v2ray-geodata
-git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
-git clone https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
-
-# 添加 istore 源并安装 luci-app-store
 echo >> feeds.conf.default
 echo 'src-git istore https://github.com/linkease/istore;main' >> feeds.conf.default
 ./scripts/feeds update istore
@@ -48,9 +38,30 @@ echo 'src-git istore https://github.com/linkease/istore;main' >> feeds.conf.defa
 
 
 
-#
-# Apply patch
-# git apply ../config/patches/{0001*,0002*}.patch --directory=feeds/luci
-#
-# ------------------------------- Other ends -------------------------------
+cd openwrt/
 
+rm -rf feeds/packages/lang/golang
+git clone https://github.com/sbwml/packages_lang_golang -b 23.x feeds/packages/lang/golang
+
+#!/bin/bash
+
+# 删除 feeds 中的 v2ray-geodata 包（适用于 openwrt-22.03 和 master 分支）
+echo "正在删除 feeds 中的 v2ray-geodata 包..."
+rm -rf feeds/packages/net/v2ray-geodata
+
+# 克隆 mosdns 和 v2ray-geodata 的仓库
+echo "正在克隆 mosdns 和 v2ray-geodata 仓库..."
+git clone https://github.com/sbwml/luci-app-mosdns -b v5 package/mosdns
+git clone https://github.com/sbwml/v2ray-geodata package/v2ray-geodata
+
+# 克隆 homeproxy 仓库
+echo "正在克隆 homeproxy 仓库..."
+git clone https://github.com/immortalwrt/homeproxy package/homeproxy
+
+# 修改 tailscale Makefile，删除与 /etc/init.d/tailscale 和 /etc/config/tailscale 相关的行
+echo "正在修改 tailscale 的 Makefile..."
+sed -i '/\/etc\/init\.d\/tailscale/d;/\/etc\/config\/tailscale/d;' feeds/packages/net/tailscale/Makefile
+
+# 克隆 luci-app-tailscale 仓库
+echo "正在克隆 luci-app-tailscale 仓库..."
+git clone https://github.com/asvow/luci-app-tailscale package/luci-app-tailscale
