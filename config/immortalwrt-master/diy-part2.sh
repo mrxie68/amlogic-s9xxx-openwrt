@@ -30,6 +30,7 @@ git clone https://github.com/ophub/luci-app-amlogic.git package/luci-app-amlogic
 # git apply ../config/patches/{0001*,0002*}.patch --directory=feeds/luci
 #
 # ------------------------------- Other ends -------------------------------
+sed -i '/\/etc\/init\.d\/tailscale/d;/\/etc\/config\/tailscale/d;' feeds/packages/net/tailscale/Makefile
 git --depth 1 clone https://github.com/asvow/luci-app-tailscale package/luci-app-tailscale
 
 rm -rf feeds/packages/lang/golang
